@@ -9,8 +9,12 @@ jobs:
         with:
           flutter-version: '3.22.0'
           channel: 'stable'
-      - run: |
-          flutter create . --project-name studio_recorder --platforms android --no-pub
+      - name: Build
+        run: |
+          cp lib/main.dart /tmp/main.dart.bak
+          flutter create . --project-name studio_recorder --platforms android --org com.example
+          cp /tmp/main.dart.bak lib/main.dart
+          flutter pub add flutter_sound permission_handler path_provider
           flutter pub get
           flutter build apk --release
       - uses: actions/upload-artifact@v4
