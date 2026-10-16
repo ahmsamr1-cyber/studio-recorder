@@ -4,13 +4,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0'
-      - run: flutter pub get
-      - run: flutter build apk --release
-      - uses: actions/upload-artifact@v3
+          flutter-version: '3.24.5'
+          channel: 'stable'
+      - run: |
+          flutter create . --project-name studio_recorder --platforms android --org com.example --no-pub
+          mv lib/main.dart /tmp/m.dart
+          flutter create . --project-name studio_recorder --platforms android --org com.example
+          mv /tmp/m.dart lib/main.dart
+          flutter pub get
+          flutter build apk --release
+      - uses: actions/upload-artifact@v4
         with:
-          name: studio-recorder-apk
+          name: apk
           path: build/app/outputs/flutter-apk/app-release.apk
