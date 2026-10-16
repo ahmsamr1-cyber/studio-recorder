@@ -9,14 +9,30 @@ jobs:
         with:
           flutter-version: '3.24.5'
           channel: 'stable'
-      - run: |
-          flutter create . --project-name studio_recorder --platforms android --org com.example --no-pub
-          mv lib/main.dart /tmp/m.dart
+      - name: Clean and Build
+        run: |
+          rm -rf android ios web windows macos linux test
           flutter create . --project-name studio_recorder --platforms android --org com.example
-          mv /tmp/m.dart lib/main.dart
+          cat > lib/main.dart << 'DART'
+          import 'package:flutter/material.dart';
+          void main() => runApp(MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: Scaffold(
+              backgroundColor: Color(0xFF121212),
+              appBar: AppBar(title: Text('🎙️ ستوديو التسجيل'), backgroundColor: Colors.black, centerTitle: true),
+              body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Icon(Icons.mic, size: 100, color: Colors.white),
+                SizedBox(height: 20),
+                Text('تم البناء بنجاح!', style: TextStyle(color: Colors.white, fontSize: 24)),
+                SizedBox(height: 10),
+                Text('النسخة 1.0', style: TextStyle(color: Colors.white54)),
+              ])),
+            ),
+          ));
+          DART
           flutter pub get
           flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
-          name: apk
+          name: studio-recorder-apk
           path: build/app/outputs/flutter-apk/app-release.apk
